@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block ul %}
+<li class="nav-item"><a class="nav-link" href="/change_password">Change Password</a></li>
+{% endblock %}
+
+{% block main %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>TOTAL </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="4"></td>
+                <td>{{ total_value }}</td>
+                <td></td>
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for stocks in index %}
+                <tr>
+                    <td>{{ stocks['symbol'] }}</td>
+                    <td>{{ stocks['name'] }}</td>
+                    <td>{{ stocks['shares'] }}</td>
+                    <td>{{ stocks['price'] }}</td>
+                    <td>{{ stocks['total_price'] }}</td>
+                    <td>
+                        <a href="/buy/{{ stocks['symbol'] }}">
+                            <button class="btn btn-primary" type="submit">Buy</button>
+                        </a>
+                        <a href="/sell/{{ stocks['symbol'] }}">
+                            <button class="btn btn-success" type="submit">Sell</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4">CASH</td>
+                <td>{{ cash }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <!--<div class='bg-modal'>-->
+    <!--    <div class='modal-content'>-->
+    <!--        <div class='close'>+</div>-->
+    <!--        <h3>BUY</h3>-->
+    <!--        <br>-->
+    <!--        <h4>-->
+    <!--            Company Name-->
+    <!--        </h4>-->
+    <!--        <form action="/buy" method="post">-->
+    <!--            <div class="form-group">-->
+    <!--                <input autocomplete="off" autofocus class="form-control" name="shares" placeholder="Shares" type="number">-->
+    <!--            </div>-->
+    <!--            <button class="btn btn-primary" type="submit">Buy</button>-->
+    <!--        </form>-->
+    <!--    </div>-->
+    <!--</div>-->
+
+{% endblock %}
