@@ -2,13 +2,15 @@ import os
 
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+# from flask_migrate import Migrate
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, lookup, usd
+
 
 # Configure application
 app = Flask(__name__)
@@ -35,8 +37,10 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure SQL Database
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/stocks_trading"
-db = SQLAlchemy(app)
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
