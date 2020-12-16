@@ -2,3 +2,5 @@ log.txt
 venv/
 __pycache__/
 .idea/
+.vscode/
+trading_app/__pycache__/
