@@ -40,8 +40,7 @@ db = SQLAlchemy(app)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 # Make sure API key is set
-app.config["API_KEY"] = "pk_1a9c41ca11814c8ab48874240e45c605"  # temporary setting
-# if not os.environ.get("API_KEY"):
-#     raise RuntimeError("API_KEY not set")
+if not os.environ.get("API_KEY"):
+    raise RuntimeError("API_KEY not set")
 
 from trading_app import routes
