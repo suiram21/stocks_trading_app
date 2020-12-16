@@ -14,13 +14,9 @@ def index():
 
     # Get the current available cash for the user from the database
     user = User.query.filter_by(id=user_id).first()
-    # user_info = db.execute("SELECT cash FROM users WHERE id = :id", id=user_id)
 
     # Get the currently owned stocks i.e symbol and total no. of shares (only positive) for the user
     rows = Transaction.query.filter_by(user_id=user_id).all()
-    # rows = db.session.execute("SELECT stocks_symbol, SUM(shares)
-    # FROM transactions WHERE user_id = :user_id
-    # GROUP BY stocks_symbol HAVING SUM(shares) > 0", user_id=user_id)
     owned_stocks = dict()
     for row in rows:
         if row.stocks_symbol in owned_stocks:
@@ -86,7 +82,6 @@ def buy(stocks_symbol=''):
         # Ensure number of shares are valid
         if shares < 1:
             return apology("value must be greater than or equal to 1", 400)
-            # To be checked how to implement in javascript
 
         # Get the info. of the symbol and check if symbol is valid
         quote_ = lookup(symbol)
@@ -95,7 +90,6 @@ def buy(stocks_symbol=''):
 
         # Query users table for the available cash using id
         rows = User.query.filter_by(id=session["user_id"]).first()
-        # rows = db.execute("SELECT * FROM users WHERE id = :id", id=session["user_id"])
 
         # Check the available cash and the price of stocks
         cash = float(rows.cash)
@@ -108,17 +102,12 @@ def buy(stocks_symbol=''):
         cash -= transaction_price
         rows.cash = cash
         db.session.commit()
-        # db.execute("UPDATE users SET cash = :cash
-        # WHERE id = :id", cash=cash, id=session["user_id"])
 
         # Add the buy transaction to the database
         transaction = Transaction(stocks_symbol=symbol, shares=shares,
                                     price=quote_["price"], user_id=session["user_id"])
         db.session.add(transaction)
         db.session.commit()
-        # db.execute("INSERT INTO transactions (user_id, stocks_symbol, shares, price)
-        # VALUES (:user_id, :stocks_symbol, :shares, :price)", user_id=session["user_id"],
-        # stocks_symbol=symbol, shares=shares, price=quote_["price"])
 
         flash(f"Bought {shares} shares of {symbol}!")
 
@@ -150,7 +139,6 @@ def buy_home(stocks_symbol):
         # Ensure number of shares are valid
         if shares < 1:
             return apology("value must be greater than or equal to 1", 400)
-            # To be checked how to implement in javascript
 
         # Get the info. of the symbol and check if symbol is valid
         quote_ = lookup(symbol)
@@ -159,7 +147,6 @@ def buy_home(stocks_symbol):
 
         # Query users table for the available cash using id
         rows = User.query.filter_by(id=session["user_id"]).first()
-        # rows = db.execute("SELECT * FROM users WHERE id = :id", id=session["user_id"])
 
         # Check the available cash and the price of stocks
         cash = float(rows.cash)
@@ -172,17 +159,12 @@ def buy_home(stocks_symbol):
         cash -= transaction_price
         rows.cash = cash
         db.session.commit()
-        # db.execute("UPDATE users SET cash = :cash
-        # WHERE id = :id", cash=cash, id=session["user_id"])
 
         # Add the buy transaction to the database
         transaction = Transaction(stocks_symbol=symbol, shares=shares,
                                     price=quote_["price"], user_id=session["user_id"])
         db.session.add(transaction)
         db.session.commit()
-        # db.execute("INSERT INTO transactions (user_id, stocks_symbol, shares, price)
-        # VALUES (:user_id, :stocks_symbol, :shares, :price)", user_id=session["user_id"],
-        # stocks_symbol=symbol, shares=shares, price=quote["price"])
 
         flash(f"Bought {shares} shares of {symbol}!")
 
@@ -196,12 +178,6 @@ def buy_home(stocks_symbol):
             rows = Transaction.query.filter_by(user_id=session["user_id"]).\
                 filter_by(stocks_symbol=stocks_symbol).all()
             num_of_shares = sum(row.shares for row in rows)
-            # db_row = db.execute("SELECT stocks_symbol, SUM(shares) FROM transactions
-            # WHERE user_id = :user_id AND stocks_symbol = :stocks_symbol
-            # GROUP BY stocks_symbol HAVING SUM(shares) > 0", user_id=session["user_id"],
-            # stocks_symbol=stocks_symbol)
-        # try:
-        #     num_of_shares = db_row[0]["SUM(shares)"]
         except:
             return apology("problem in database")
 
@@ -225,8 +201,6 @@ def history():
     # Query the transaction database for all data for the user
     transactions = Transaction.query.filter_by(user_id=user_id).\
                                             order_by(Transaction.transaction_date.desc()).all()
-    # rows = db.execute("SELECT * FROM transactions
-    # WHERE user_id = :user_id ORDER BY transacted DESC", user_id=user_id)
 
     # Initialize index dictionary for data that will be used in the table in history.html
     index_ = dict()
@@ -357,7 +331,6 @@ def register():
 
         # Check if username doesn't exist
         rows = User.query.filter_by(username=username).first()
-        # rows = db.execute("SELECT * FROM users WHERE username = :username", {"username":username})
         if rows:
             return apology("username already exists", 403)
 
@@ -371,9 +344,6 @@ def register():
         user = User(username=username, email=email, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        # db.execute("INSERT INTO users (username, hash)
-        # VALUES (username = :username, hash = :hash)",
-        # username=username, hash=generate_password_hash(password))
 
         # Remember which user has registered
         session["user_id"] = user.id
@@ -403,14 +373,9 @@ def sell(stocks_symbol=''):
             stocks_shares[row.stocks_symbol] += row.shares
         else:
             stocks_shares[row.stocks_symbol] = row.shares
-    # rows = db.execute("SELECT stocks_symbol, SUM(shares) FROM transactions
-    # WHERE user_id = :user_id GROUP BY stocks_symbol
-    # HAVING SUM(shares) > 0", user_id=user_id)
 
     # Create dictionary of the owned stocks symbol and no. of shares
     owned_stocks = {stocks:shares for stocks, shares in stocks_shares.items() if shares > 0}
-    # for stocks_share in stocks:
-    #     owned_stocks[row["stocks_symbol"]] = row["SUM(shares)"]
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -432,7 +397,6 @@ def sell(stocks_symbol=''):
         # Ensure number of shares are valid
         if shares < 1:
             return apology("value must be greater than or equal to 1")
-            # To be implemented as javascript
 
         # Ensure the user owned the stocks
         elif symbol not in owned_stocks:
@@ -447,7 +411,6 @@ def sell(stocks_symbol=''):
 
         # Query users table for the available cash using id
         rows = User.query.filter_by(id=user_id).first()
-        # rows = db.execute("SELECT * FROM users WHERE id = :id", id=user_id)
 
         # Check the available cash of the user and the total price of stocks
         cash = float(rows.cash)
@@ -457,16 +420,12 @@ def sell(stocks_symbol=''):
         cash += transaction_price
         rows.cash = cash
         db.session.commit()
-        # db.execute("UPDATE users SET cash = :cash WHERE id = :id", cash=cash, id=user_id)
 
         # Add the sell transaction to the database
         transaction = Transaction(stocks_symbol=symbol, shares=shares*-1,
                                     price=quote_["price"], user_id=user_id)
         db.session.add(transaction)
         db.session.commit()
-        # db.execute("INSERT INTO transactions (user_id, stocks_symbol, shares, price)
-        # VALUES (:user_id, :stocks_symbol, :shares, :price)", user_id=user_id,
-        # tocks_symbol=symbol, shares=shares*-1, price=quote_["price"])
 
         flash(f"Sold {shares} shares of {symbol}!")
 
@@ -493,15 +452,9 @@ def sell_home(stocks_symbol):
             stocks_shares[row.stocks_symbol] += row.shares
         else:
             stocks_shares[row.stocks_symbol] = row.shares
-    # rows = db.execute("SELECT stocks_symbol, SUM(shares)
-    # FROM transactions WHERE user_id = :user_id GROUP BY stocks_symbol
-    # HAVING SUM(shares) > 0", user_id=user_id)
 
     # Create dictionary of the owned stocks symbol and no. of shares
     owned_stocks = {stocks:shares for stocks, shares in stocks_shares.items() if shares > 0}
-    # owned_stocks = dict()
-    # for row in rows:
-    #     owned_stocks[row["stocks_symbol"]] = row["SUM(shares)"]
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -534,7 +487,6 @@ def sell_home(stocks_symbol):
 
         # Query users table for the available cash using id
         rows = User.query.filter_by(id=user_id).first()
-        # rows = db.execute("SELECT * FROM users WHERE id = :id", id=user_id)
 
         # Check the available cash of the user and the total price of stocks
         cash = float(rows.cash)
@@ -544,16 +496,12 @@ def sell_home(stocks_symbol):
         cash += transaction_price
         rows.cash = cash
         db.session.commit()
-        # db.execute("UPDATE users SET cash = :cash WHERE id = :id", cash=cash, id=user_id)
 
         # Add the sell transaction to the database
         transaction = Transaction(stocks_symbol=symbol, shares=shares*-1,
                                     price=quote_["price"], user_id=user_id)
         db.session.add(transaction)
         db.session.commit()
-        # db.execute("INSERT INTO transactions (user_id, stocks_symbol, shares, price)
-        # VALUES (:user_id, :stocks_symbol, :shares, :price)", user_id=user_id,
-        # stocks_symbol=symbol, shares=shares*-1, price=quote_["price"])
 
         flash(f"Sold {shares} shares of {symbol}!")
 
@@ -598,7 +546,6 @@ def changepassword():
 
         # Query database for username
         users = User.query.filter_by(username=username).all()
-        # rows = db.execute("SELECT * FROM users WHERE username = :username", username=username)
 
         # Ensure username exists and password is correct
         if len(users) != 1 or not check_password_hash(users[0].password, old_password):
@@ -615,8 +562,6 @@ def changepassword():
         # Update the new password of the user
         users[0].password = generate_password_hash(new_password)
         db.session.commit()
-        # db.execute("UPDATE users SET hash = :hash WHERE id = :id",
-        # hash=generate_password_hash(new_password), id=id)
 
         # Remember which user has registered
         session["user_id"] = users[0].id

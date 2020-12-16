@@ -1,7 +1,5 @@
 from datetime import datetime
-# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from trading_app import db
-# from flask_login import UserMixin
 
 
 class User(db.Model):
