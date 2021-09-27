@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block ul %}
+<li class="nav-item"><a class="nav-link" href="/change_password">Change Password</a></li>
+{% endblock %}
+
+{% block main %}
+    <p>
+        A share of {{ name }} (<b>{{ symbol }}</b>) costs <b>{{price}}</b>.
+    </p>
+{% endblock %}

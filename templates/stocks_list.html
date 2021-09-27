@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Stocks List
+{% endblock %}
+
+{% block ul %}
+<li class="nav-item"><a class="nav-link" href="/change_password">Change Password</a></li>
+{% endblock %}
+
+{% block main %}
+    <h1>S&P 500</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Company Name</th>
+                <th>Sector</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks.items %}
+                <tr>
+                    <td><a href="{{ url_for('quote_stocks', stocks_symbol=stock['symbol']) }}">{{ stock['symbol'] }}</a></td>
+                    <td>{{ stock['company_name'] }}</td>
+                    <td>{{ stock['sector'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% for page_num in stocks.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+        {% if page_num %}
+            {% if stocks.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('stocks_list', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('stocks_list', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            . . .
+        {% endif %}
+    {% endfor %}
+
+
+{% endblock %}

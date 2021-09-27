@@ -1,0 +1,6 @@
+.env
+sp500.py
+SP-500.csv
+/venv
+/.idea
+/__pycache__
